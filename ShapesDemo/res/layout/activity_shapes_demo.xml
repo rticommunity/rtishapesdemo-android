@@ -1,0 +1,187 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/AppTheme"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#0099cc"
+    android:fitsSystemWindows="true"
+    tools:context=".ShapesDemo" >
+    
+    <FrameLayout
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:fitsSystemWindows="false"
+        android:scrollbarAlwaysDrawVerticalTrack="false" >
+
+        <com.rti.android.shapesdemo.DrawView
+            android:id="@+id/DrawView"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:background="@drawable/water"
+            android:scrollbarAlwaysDrawVerticalTrack="false"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="@dimen/TableOffset" >
+
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/radioSquare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:checked="true"
+                android:text="@string/Square" />
+
+            <RadioButton
+                android:id="@+id/radioCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/Circle" />
+
+            <RadioButton
+                android:id="@+id/radioTriangle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp"
+                android:text="@string/Triangle" />
+
+        </RadioGroup>
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <CheckBox
+                android:id="@+id/checkboxPurple"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Purple" />
+
+            <CheckBox
+                android:id="@+id/checkboxBlue"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Blue" />
+
+            <CheckBox
+                android:id="@+id/checkboxRed"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Red" />
+
+            <CheckBox
+                android:id="@+id/checkboxGreen"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_marginRight="5dp"
+                android:text="@string/Green" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center" >
+
+            <CheckBox
+                android:id="@+id/checkboxYellow"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Yellow" />
+
+            <CheckBox
+                android:id="@+id/checkboxCyan"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Cyan" />
+
+            <CheckBox
+                android:id="@+id/checkboxMagenta"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/Magenta" />
+
+            <CheckBox
+                android:id="@+id/checkboxOrange"
+                style="@android:style/Widget.CompoundButton.RadioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:text="@string/Orange" />
+
+        </TableRow>
+    </TableLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="425dp" >
+
+        <Button
+            android:id="@+id/buttonPublish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/Publish" />
+
+        <Button
+            android:id="@+id/buttonSubscribe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/Subscribe" />
+
+        <CheckBox
+            android:id="@+id/checkboxAccel"
+            style="@android:style/Widget.CompoundButton.RadioButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginRight="120dp"
+            android:layout_marginTop="60dp"
+            android:checked="false"
+            android:text="@string/Accel" />
+
+        <CheckBox
+            android:id="@+id/checkboxPause"
+            style="@android:style/Widget.CompoundButton.RadioButton"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginLeft="120dp"
+            android:layout_marginTop="60dp"
+            android:checked="false"
+            android:text="@string/Pause" />
+
+    </FrameLayout>
+</FrameLayout>

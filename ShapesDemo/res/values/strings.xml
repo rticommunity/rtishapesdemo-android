@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ShapesDemo</string>
+    <string name="Pause">Pause</string>
+    <string name="Accel">Accel</string>
+    <string name="Publish">Publish</string>
+    <string name="Subscribe">Subscribe</string>
+    <string name="Square">Square</string>
+    <string name="Circle">Circle</string>
+    <string name="Triangle">Triangle</string>
+    <string name="Red">Red</string>
+    <string name="Blue">Blue</string>
+    <string name="Purple">Purple</string>
+    <string name="Green">Green</string>
+    <string name="Orange">Orange</string>
+    <string name="Yellow">Yellow</string>
+    <string name="Magenta">Magenta</string>
+    <string name="Cyan">Cyan</string>
+    <string name="Settings">Settings</string>
+    <string name="Control">Control</string>
+    <string name="start_dds">Start DDS</string>
+    <string name="stop_dds">Stop DDS</string>
+
+</resources>

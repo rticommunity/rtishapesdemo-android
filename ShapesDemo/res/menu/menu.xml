@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menu_settings" android:title="@string/Settings"></item>
+    <item android:id="@+id/menu_start" android:enabled="false" android:title="@string/start_dds" android:showAsAction="ifRoom"></item>
+    <item android:id="@+id/menu_stop" android:title="@string/stop_dds" android:showAsAction="ifRoom"></item>
+</menu>
