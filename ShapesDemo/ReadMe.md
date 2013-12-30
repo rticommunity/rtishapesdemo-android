@@ -1,30 +1,19 @@
-/*****************************************************************************/
-/*         (c) Copyright, Real-Time Innovations, All rights reserved.        */
-/*                                                                           */
-/*         Permission to modify and use for internal purposes granted.       */
-/* This software is provided "as is", without warranty, express or implied.  */
-/*                                                                           */
-/*****************************************************************************/
 
- /*****************************************************************************
- 
-  Running
-  
- *****************************************************************************/
- 
-1) Please see Getting Started below
+Running
+=========
+
+1. Please see Getting Started below
  
  
-2) ShapesDemo is configured to work using Android's WiFi network interface,
-   so your device should be connected to a WiFi network.
+2. ShapesDemo is configured to work using Android's WiFi network interface, 
+so your device should be connected to a WiFi network.
     
     
-3) Run ShapesDemo.exe on your computer.
-
-   Your computer should be on the same WiFi network (on the same subnet).
+3. Run ShapesDemo.exe on your computer. Your computer should be on the same 
+WiFi network (on the same subnet).
    
    
-4) By default, multicast discovery is used.
+4. By default, multicast discovery is used.
 
 a) Windows 7 users should make sure that their WiFi's network location is set to either
 Home, Work, or Domain.  If the network location is set to Public, the Windows 7 firewall may
