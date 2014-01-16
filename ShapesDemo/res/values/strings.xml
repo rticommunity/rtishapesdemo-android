@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ShapesDemo</string>
+    <string name="app_name">RTI Shapes Demo</string>
     <string name="Pause">Pause</string>
     <string name="Accel">Accel</string>
     <string name="Publish">Publish</string>
