@@ -22,20 +22,28 @@ These instructions are for a Windows development host.
   Go to http://developer.android.com/tools/sdk/ndk/index.html and follow [these instructions](http://tools.android.com/recent/usingthendkplugin). Note that you don't need the legacy NDK toolchains.
 
 4. Install RTI Connext DDS Micro
+   
+   RTI Connext DDS Micro provides a small-footprint modular messaging solution for resource-limited devices that have   
+   minimal memory, Flash, CPU power or no operating system. For detail http://www.rti.com/products/micro/.
 
-  You'll need to get this from your local RTI representative. Contact info@rti.com to find out who this is.
+   To get a copy of RTI Connext DDS Micro, contact your local RTI representative   
+   (http://www.rti.com/company/contact/index.html) or email at info@rti.com to find out your local representative.
+  
+   To install RTI Connext DDS Micro, you need to get a set of Host support source files and target ARCH libraries. 
 
 5. Open ShapesDemo project in Eclipse
    
     1. Start Eclipse
-    2. Use File -> Import -> Existing Projects into Workspace
+    2. Use File -> Import -> Existing Android Code into Workspace
     3. Select the directory where you have installed the ShapesDemo project
 
 6. Edit `jni/Android.mk`
   You should modify the file to reflect the directory where you installed RTI Connext DDS Micro.  
   You may also want to use a different architecture for the Connext DDS Micro libraries.
+  
+   For example on Windows platform,
 
-        RTI_CONNEXT_MICRO_HOME := C:\Rti\rti_me.2.2.3
+        RTI_CONNEXT_MICRO_HOME := C:\RTI\rti_connext_micro.2.3
         PLATFORM_ARCH := armv7leAndroidR8Dgcc4.7
 
     If you have NDK8 or earlier, please upgrade to NDK9 if you can.  Otherwise, look in the 
