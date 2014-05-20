@@ -14,8 +14,5 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Rti/connext.5.1/android/ndds.5.1.0/lib/armv7aAndroid2.3gcc4.8jdk"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/libnddsjava.so"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/libnddsc.so"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.USER_LIBRARY/libnddscore.so"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

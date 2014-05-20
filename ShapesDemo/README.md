@@ -34,15 +34,9 @@ These instructions are for a Windows development host.
     1. Open Properties for the ShapesDemo project
     2. Select "Java Build Path", and in the "Libraries" tab, use "Add External JAR" to add "nddsjava.jar" from 
        $(NDDSHOME)/class/
-    3. Also add "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
-    4. Change to the "Order and Export" tab, use the Up/Down buttons to order the added files such that from top to bottom,
-       the files appear in the following order
-    
-       nddsjava.jar
-       libnddsjava.so
-       libnddsc.so
-       libnddscore.so
-       
+    3. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
+       into the project directory libs/armeabi-v7a
+
 6. Generate the type support code for Java
 
    (assuming that you have RTI Connext DDS properly installed and with the $(NDDSHOME) environment variable set to the installation directory of connext.5.x/ndds.5.x.x
@@ -52,7 +46,7 @@ These instructions are for a Windows development host.
         you should see the file "ShapesType.idl" in the current working directory
     3. run the following command
      
-       $(NDDSHOME)/scripts/rtiddsgen -replace -package com.rti.android.shapesdemo.idl ShapeType.idl
+       $(NDDSHOME)/scripts/rtiddsgen -replace -language Java -package com.rti.android.shapesdemo.idl ShapeType.idl
        
        you may need to also use "-ppdisable" if you're developing on a Windows host
    
