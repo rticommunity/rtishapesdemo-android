@@ -29,5 +29,8 @@
                 android:inputType="phone" 
                 android:key="peerList" 
                 android:persistent="true" />
+         <com.rti.android.shapesdemo.util.DeviceIpAddressDisplay 
+		        android:title="Device IP Address:"
+		        android:key="device_ip_address" />
 
  </PreferenceScreen>

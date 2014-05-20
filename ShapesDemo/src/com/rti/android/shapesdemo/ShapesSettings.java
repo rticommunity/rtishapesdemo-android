@@ -41,6 +41,7 @@ public class ShapesSettings extends Activity
 
 			// Load the preferences from an XML resource
 			addPreferencesFromResource(R.xml.settings);
+			
 		}
 	}
 

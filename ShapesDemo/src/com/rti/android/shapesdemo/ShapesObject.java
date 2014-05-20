@@ -8,6 +8,9 @@
 
 package com.rti.android.shapesdemo;
 
+import com.rti.dds.infrastructure.*;
+import com.rti.android.shapesdemo.idl.ShapeType;
+import com.rti.android.shapesdemo.idl.ShapeTypeDataWriter;
 import com.rti.android.shapesdemo.util.Vector2d;
 
 import java.util.Locale;
@@ -26,12 +29,10 @@ class ShapesObject
 		SQUARE, CIRCLE, TRIANGLE
 	}
 
+	private ShapeType shape = new ShapeType();
+	private ShapeTypeDataWriter writer = null;
 	private ShapeKind type;
-	private String color;
 	private int drawColor;
-	private float x;
-	private float y;
-	private float size;
 	private float speed;
 	
 	/* a normalized vector indicating direction of travel */
@@ -55,21 +56,22 @@ class ShapesObject
 	private final static Random rand = new Random();
 
 	/* Constructor */
-	public ShapesObject(ShapeKind type, String color, float size)
+	public ShapesObject(ShapeKind type, String color, int size, ShapeTypeDataWriter writer)
 	{
 		this(type, color, rand.nextInt(235), rand.nextInt(235), size, rand.nextInt(20),
 		        new Vector2d(rand.nextInt(100), rand.nextInt(100)).normalize());
+		this.writer = writer;
 	}
 
 	/* Constructor */
-	public ShapesObject(ShapeKind type, String color, float x, float y,
-	        float size, float speed, Vector2d direction)
+	public ShapesObject(ShapeKind type, String color, int x, int y,
+	        int size, float speed, Vector2d direction)
 	{
 		this.type = type;
-		this.color = color.trim().toUpperCase(Locale.US);
-		this.x = x;
-		this.y = y;
-		this.size = size;
+		this.shape.color = color.trim().toUpperCase(Locale.US);
+		this.shape.x = x;
+		this.shape.y = y;
+		this.shape.shapesize = size;
 		this.speed = speed;
 		this.direction = direction;
 
@@ -92,24 +94,24 @@ class ShapesObject
 		triangle = new Path();
 		
 		// Must use .equal() to compare string values
-		if (this.color.equals("PURPLE")) {
+		if (this.shape.color.equals("PURPLE")) {
 			drawColor = PURPLE;
-		} else if (this.color.equals("BLUE")) {
+		} else if (this.shape.color.equals("BLUE")) {
 			drawColor = Color.BLUE;
-		} else if (this.color.equals("RED")) {
+		} else if (this.shape.color.equals("RED")) {
 			drawColor = Color.RED;
-		} else if (this.color.equals("GREEN")) {
+		} else if (this.shape.color.equals("GREEN")) {
 			drawColor = Color.GREEN;
-		} else if (this.color.equals("YELLOW")) {
+		} else if (this.shape.color.equals("YELLOW")) {
 			drawColor = Color.YELLOW;
-		} else if (this.color.equals("CYAN")) {
+		} else if (this.shape.color.equals("CYAN")) {
 			drawColor = Color.CYAN;
-		} else if (this.color.equals("MAGENTA")) {
+		} else if (this.shape.color.equals("MAGENTA")) {
 			drawColor = Color.MAGENTA;
-		} else if (this.color.equals("ORANGE")) {
+		} else if (this.shape.color.equals("ORANGE")) {
 			drawColor = ORANGE;
 		} else {
-			Log.d("ShapesObject", "Color '" + this.color + " unknown, setting to BLACK");
+			Log.d("ShapesObject", "Color '" + this.shape.color + " unknown, setting to BLACK");
 			drawColor = Color.BLACK;
 		}
 	}
@@ -138,17 +140,17 @@ class ShapesObject
 				break;
 
 			case CIRCLE:
-				canvas.drawCircle(x, y, size / 2, paintObject);
+				canvas.drawCircle(shape.x, shape.y, shape.shapesize / 2, paintObject);
 
 				if (drawBorder) {
-					canvas.drawCircle(x, y, size / 2, paintBorder);
+					canvas.drawCircle(shape.x, shape.y, shape.shapesize / 2, paintBorder);
 				}
 				break;
 
 			case TRIANGLE:
 
 				triangle.reset();
-				triangle.moveTo(x, top);
+				triangle.moveTo(shape.x, top);
 				triangle.lineTo(right, bottom);
 				triangle.lineTo(left, bottom);
 				triangle.close();
@@ -162,6 +164,26 @@ class ShapesObject
 		}
 	}
 	
+	/*
+	 * Send data via DDS
+	 */
+	public boolean write()
+	{
+		if (writer == null)
+		{
+			return false;
+		}
+		
+		try {
+            writer.write(shape, InstanceHandle_t.HANDLE_NIL);
+        } catch(RETCODE_ERROR e) {
+            Log.e("ShapesObject", "Write error " + 
+                    e.getClass().toString() + ": " + e.getMessage());
+           return false;
+        }
+		return true;
+	}
+	
 	/* Check if X,Y coordinate is within the shape's bounding box 
 	 * at current location.
 	 */
@@ -173,25 +195,25 @@ class ShapesObject
 		return false;
 	}
 	
-	public void setPosition(float x, float y)
+	public void setPosition(int x, int y)
 	{
-		this.x = x;
-		this.y = y;
-		/* precalculate bounding box */
-		left = x - (size / 2);
-		top = y - (size / 2);
-		right = x + (size / 2);
-		bottom = y + (size / 2);
+		this.shape.x = x;
+		this.shape.y = y;
+		/* Recalculate bounding box */
+		left = x - (shape.shapesize / 2);
+		top = y - (shape.shapesize / 2);
+		right = x + (shape.shapesize / 2);
+		bottom = y + (shape.shapesize / 2);
 	}
 
-	public float getX()
+	public int getX()
 	{
-		return x;
+		return shape.x;
 	}
 
-	public float getY()
+	public int getY()
 	{
-		return y;
+		return shape.y;
 	}
 
 	public float getSpeed()
@@ -204,19 +226,19 @@ class ShapesObject
 		this.speed = speed;
 	}
 
-	public float getSize()
+	public int getSize()
 	{
-		return size;
+		return shape.shapesize;
 	}
 
-	public void setSize(float size)
+	public void setSize(int size)
 	{
-		this.size = size;
+		shape.shapesize = size;
 	}
 
 	public String getColor()
 	{
-		return color;
+		return shape.color;
 	}
 
 	public Vector2d getDirection()
