@@ -22,22 +22,8 @@ These instructions are for a Windows development host.
   NOTE: RTI offers the Android target platform only for RTI Connext 5.1.0 and higher.
 
   You'll need to get this from your local RTI representative. Contact info@rti.com to find out who this is.
-
-4. Open ShapesDemo project in Eclipse
-   
-    1. Start Eclipse
-    2. Use File -> Import -> Existing Projects into Workspace
-    3. Select the directory where you have installed the ShapesDemo project
-
-5. Add nddsjava.jar and supporting shared libraries to project
-
-    1. Open Properties for the ShapesDemo project
-    2. Select "Java Build Path", and in the "Libraries" tab, use "Add External JAR" to add "nddsjava.jar" from 
-       $(NDDSHOME)/class/
-    3. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
-       into the project directory libs/armeabi-v7a
-
-6. Generate the type support code for Java
+  
+4. Generate the type support code for Java
 
    (assuming that you have RTI Connext DDS properly installed and with the $(NDDSHOME) environment variable set to the installation directory of connext.5.x/ndds.5.x.x
    
@@ -49,6 +35,28 @@ These instructions are for a Windows development host.
        $(NDDSHOME)/scripts/rtiddsgen -replace -language Java -package com.rti.android.shapesdemo.idl ShapeType.idl
        
        you may need to also use "-ppdisable" if you're developing on a Windows host
+
+5. Open ShapesDemo project in Eclipse
+   
+    1. Start Eclipse
+    2. Use File -> Import -> Existing Projects into Workspace
+    3. Select the directory where you have installed the ShapesDemo project
+
+6. Add nddsjava.jar and supporting shared libraries to project
+
+    1. Open Properties for the ShapesDemo project
+    2. Select "Java Build Path", and in the "Libraries" tab, use "Add External JAR" to add "nddsjava.jar" from 
+       $(NDDSHOME)/class/
+    3. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
+       into the project directory libs/armeabi-v7a
+
+7. To generate the APK, with the ShapesDemo project selected in the Project Explorer, you will need to select "Run" from the "Run" menu.  
+
+   You may need to use "Run As"  -->  "Android Application"
+   
+   (at this time, your Android device should already be attached via USB in debug mode, or you can have Eclipse start an emulator.
+   
+   Please consult the Android eclipse SDK documentation for further information.
    
 
 
