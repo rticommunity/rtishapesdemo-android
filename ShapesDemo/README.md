@@ -192,7 +192,7 @@ File Description
     2. On Windows 7 (and Linux) check your firewall, you may need to turn it off.
     
     3. Get data to Android but not from Android, probably because your host computer has too
-    many active NIFs.  Disable all but your WiFi NIF and rerun RTI Shapes Demo.exe.
+    many active network interfaces (NIFs).  Disable all but your WiFi NIF and rerun RTI Shapes Demo.exe.
 
 
 
