@@ -17,19 +17,24 @@ These instructions are for a Windows development host.
 
 2. Use the Android SDK Manager to install the Android platforms for which you want to build (e.g., Android 4.1.2, Android 4.2.2, Android 4.3, etc.).  Make use that you run the Android SDK Manager with Adminstrator Priviledges if on Windows 7.
 
-3. Install the Android NDK (native compiler for JNI).
+3. Install RTI Connext DDS development platform (and Connext DDS target libraries for Android)
 
-  Go to http://developer.android.com/tools/sdk/ndk/index.html and follow [these instructions](http://tools.android.com/recent/usingthendkplugin). Note that you don't need the legacy NDK toolchains.
+  NOTE: RTI offers the Android target platform only for RTI Connext 5.1.0 and higher.
 
-4. Install RTI Connext DDS Micro
-   
-   RTI Connext DDS Micro provides a small-footprint modular messaging solution for resource-limited devices that have   
-   minimal memory, Flash, CPU power or no operating system. For detail http://www.rti.com/products/micro/.
-
-   To get a copy of RTI Connext DDS Micro, contact your local RTI representative   
-   (http://www.rti.com/company/contact/index.html) or email at info@rti.com to find out your local representative.
+  You'll need to get this from your local RTI representative. Contact info@rti.com to find out who this is.
   
-   To install RTI Connext DDS Micro, you need to get a set of Host support source files and target ARCH libraries. 
+4. Generate the type support code for Java
+
+   (assuming that you have RTI Connext DDS properly installed and with the `NDDSHOME` environment variable set to the installation directory of `RTI/ndds.5.x.x`
+   
+    1. Open a shell/command prompt to the ShapesDemo project directory
+    2. cd to `src` 
+        you should see the file `ShapesType.idl` in the current working directory
+    3. run the following command
+     
+       $(NDDSHOME)/scripts/rtiddsgen -replace -language Java -package com.rti.android.shapesdemo.idl ShapeType.idl
+       
+       you may need to also use `-ppdisable` if you're developing on a Windows host
 
 5. Open ShapesDemo project in Eclipse
    
@@ -37,33 +42,22 @@ These instructions are for a Windows development host.
     2. Use File -> Import -> Existing Android Code into Workspace
     3. Select the directory where you have installed the ShapesDemo project
 
-6. Edit `jni/Android.mk`
-  You should modify the file to reflect the directory where you installed RTI Connext DDS Micro.  
-  You may also want to use a different architecture for the Connext DDS Micro libraries.
-  
-   For example on Windows platform,
+6. Add `nddsjava.jar` and supporting shared libraries to project
 
-        RTI_CONNEXT_MICRO_HOME := C:\RTI\rti_connext_micro.2.3
-        PLATFORM_ARCH := armv7leAndroidR8Dgcc4.7
+    1. Open Properties for the ShapesDemo project
+    2. Select "Java Build Path", and in the "Libraries" tab, use "Add External JAR" to add `nddsjava.jar` from 
+       `$(NDDSHOME)/class/`
+    3. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
+       into the project directory libs/armeabi-v7a
 
-    If you have NDK8 or earlier, please upgrade to NDK9 if you can.  Otherwise, look in the 
-    Troubleshooting section below for alternate instructions.
+7. To generate the APK, with the ShapesDemo project selected in the Project Explorer, you will need to select "Run" from the "Run" menu.  
 
-
-7. Build Project
-Use Project -> Build Project. The Output in the (CDT Build) Console should look like:
-
-        11:59:30 **** Build of configuration Default for project ShapesDemo ****
-        "C:\\Apps\\android-ndk-r9\\ndk-build.cmd" NDK_DEBUG=1 all 
-        Android NDK: WARNING: APP_PLATFORM android-18 is larger than android:minSdkVersion 14 in ./AndroidManifest.xml    
-        Gdbserver      : [arm-linux-androideabi-4.6] libs/armeabi/gdbserver
-        Gdbsetup       : libs/armeabi/gdb.setup
-        "Compile thumb : rti_android_shapesdemo <= RTIDDSWrapper.c
-        "Compile thumb : rti_android_shapesdemo <= ShapeType.c
-        "Compile thumb : rti_android_shapesdemo <= ShapeTypePlugin.c
-        "Compile thumb : rti_android_shapesdemo <= ShapeTypeSupport.c
-        SharedLibrary  : librti_android_shapesdemo.so
-        Install        : librti_android_shapesdemo.so => libs/armeabi/librti_android_shapesdemo.so
+   You may need to use "Run As"  -->  "Android Application"
+   
+   (at this time, your Android device should already be attached via USB in debug mode, or you can have Eclipse start an emulator.
+   
+   Please consult the Android eclipse SDK documentation for further information.
+   
 
 
 ## Getting Started
@@ -157,39 +151,34 @@ File Description
 -----------------
 ### Java ###
  
-* `src/com/rti/android/shapesdemo/ShapesDemo.java` — The main Activity for ShapesDemo. Handles all of the button actions and has a periodic event to redraw the canvas.
+* `src/com/rti/android/shapesdemo/ShapesDemo.java` - The main Activity for ShapesDemo. Handles all of the button actions and has a periodic event to redraw the canvas.
  
-* `src/com/rti/android/shapesdemo/DrawView.java` — Class that manages shapes that have been published and subscribed to as well as the canvas on which the shapes are drawn.
+* `src/com/rti/android/shapesdemo/DrawView.java` - Class that manages shapes that have been published and subscribed to as well as the canvas on which the shapes are drawn.
  
-* `src/com/rti/android/shapesdemo/ShapesObject.java` — Class that implements the behavior of an shape.
+* `src/com/rti/android/shapesdemo/ShapesObject.java` - Class that implements the behavior of an shape.
 
-* `src/com/rti/android/shapesdemo/ShapesDDS.java` — Class that manages how RTI Connext DDS is used for the ShapesDemo.
+* `src/com/rti/android/shapesdemo/ShapesDDS.java` - Class that manages how RTI Connext DDS is used for the ShapesDemo.
  
-* `src/com/rti/android/shapesdemo/ShapesSetting.java` — Android Activity used to create "Settings" option.
+* `src/com/rti/android/shapesdemo/ShapesSetting.java` - Android Activity used to create "Settings" option.
 
-* `src/com/rti/android/shapesdemo/util/Vector2d.java` — A mimimalistic implementation of a 2-D vector class with some helpful functions.
+* `src/com/rti/android/shapesdemo/util/Vector2d.java` - A mimimalistic implementation of a 2-D vector class with some helpful functions.
  
-* `src/com/rti/android/shapesdemo/util/EditTextPreferenceWithValue.java` — Useful class so that when a preference (setting/option) is changed by the user, the new value is automatically reflected in the preferences menu.
+* `src/com/rti/android/shapesdemo/util/EditTextPreferenceWithValue.java` - Useful class so that when a preference (setting/option) is changed by the user, the new value is automatically reflected in the preferences menu.
  
  
-### JNI - C ###
 
-* `jni/RTIDDSWrapper.c` — JNI interface using RTI Connext DDS Micro's C API.
-
-* `jni/ShapeType.xxx` — Support files for data type generate with "rtiddsgen -language microC ShapeType.idl" using rtiddsgen distributed with RTI Connext DDS Micro.
- 
  
 ### Android Application Files ###
 
-* `AndroidManifest.xml` — Main definition file for ShapesDemo app including which Activity to start on startup
+* `AndroidManifest.xml` - Main definition file for ShapesDemo app including which Activity to start on startup
 
-* `res/layout/activity_shapes_demo.xml` — main layout of the graphics elements of the ShapesDemo application
+* `res/layout/activity_shapes_demo.xml` - main layout of the graphics elements of the ShapesDemo application
 
-* `res/layout/preferences_with_value.xml` — utility used to define a layout where the current value of a preference are displayed on the same line as the preference.
+* `res/layout/preferences_with_value.xml` - utility used to define a layout where the current value of a preference are displayed on the same line as the preference.
 
-* `res/menu/menu.xml` — defines the layout of the Android options menu
+* `res/menu/menu.xml` - defines the layout of the Android options menu
 
-* `res/xml/settings.xml` — defines the preferences that can be set by the Settings option submen
+* `res/xml/settings.xml` - defines the preferences that can be set by the Settings option submen
 
 
 ## Troubleshooting
@@ -203,33 +192,9 @@ File Description
     2. On Windows 7 (and Linux) check your firewall, you may need to turn it off.
     
     3. Get data to Android but not from Android, probably because your host computer has too
-    many active NIFs.  Disable all but your WiFi NIF and rerun RTI Shapes Demo.exe.
+    many active network interfaces (NIFs).  Disable all but your WiFi NIF and rerun RTI Shapes Demo.exe.
 
 
-2. Build problems?
-
-    1. Make sure that Eclipse knows where your NDK is located
-    Set Eclipse -> Window -> Preferences -> Android -> NDK to the location of your Android NDK installation
-    
-    2. NDK R8 users
-    If you can't upgrade to NDK 9...then unfortunately, NDK 8 has a problem in which the paths set in _jni/Android.mk_ must be relative to the location of the _Android.mk_ file. 
-    So, in _jni/Android.mk_, you will need to set `RTI_CONNEXT_MICRO_HOME` differently...
-    For example, you have the following installation directories
-    
-            C:\Rti\rti_me.2.2.3
-            C:\Users\demo\workspace\ShapesDemo\jni\Android.mk
-            
-      In this case, you would have to use
-      
-          RTI_CONNEXT_MICRO_HOME := ..\..\..\..\..\Rti\rti_me.2.2.3
-        
-      AND, unfortunately, you have to modify
-    
-          LOCAL_C_INCLUDES := $(RTI_CONNEXT_MICRO_HOME)\include\rti_me $(RTI_CONNEXT_MICRO_HOME)\include
-    
-      to be
-   
-          LOCAL_C_INCLUDES := C:\Rti\rti_me.2.2.3\include\rti_me C:\Rti\rti_me.2.2.3\include
 
 
 

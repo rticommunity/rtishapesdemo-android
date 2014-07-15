@@ -7,6 +7,10 @@
 /*****************************************************************************/
 package com.rti.android.shapesdemo;
 
+import com.rti.dds.infrastructure.RETCODE_NO_DATA;
+import com.rti.dds.infrastructure.ResourceLimitsQosPolicy;
+import com.rti.dds.subscription.*;
+import com.rti.android.shapesdemo.idl.*;
 import com.rti.android.shapesdemo.ShapesDDS;
 import com.rti.android.shapesdemo.util.Vector2d;
 import com.rti.android.shapesdemo.ShapesObject.ShapeKind;
@@ -18,7 +22,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -55,8 +58,7 @@ public class DrawView extends View
 	/* store all of the objects that are being published and subscribed */
 	private Map<ShapeKind, Map<String, ShapesObject>> pubObjects;
 	private Map<ShapeKind, Map<String, ShapesObject>> subObjects;
-	private Map<ShapeKind, Integer> shapeWriters;
-	private Map<ShapeKind, Integer> shapeReaders;
+	private Map<ShapeKind, DataReader> shapeReaders;
 	
 	/* Used to access the preferences set via the "Settings" menu */
 	private SharedPreferences settings;
@@ -83,8 +85,7 @@ public class DrawView extends View
 		subObjects.put(ShapeKind.CIRCLE, new HashMap<String, ShapesObject>());
 		subObjects.put(ShapeKind.TRIANGLE, new HashMap<String, ShapesObject>());
 
-		shapeWriters = new HashMap<ShapeKind, Integer>();
-		shapeReaders = new HashMap<ShapeKind, Integer>();
+		shapeReaders = new HashMap<ShapeKind, DataReader>();
 		
 		/* So that the Eclipse editor can render the canvas */
 		if (!isInEditMode()) {
@@ -104,7 +105,7 @@ public class DrawView extends View
 		/* Get some settings from preference manager */
 		settings = PreferenceManager.getDefaultSharedPreferences(getContext());
         int domainID = Integer.parseInt(settings.getString("domainID", "0"));
-        String peerList = settings.getString("peerList", "239.255.0.1");
+        String peerList = settings.getString("peerList", null);
         
 		shapesDDS = new ShapesDDS();
 		if (!shapesDDS.initialize(domainID, peerList))
@@ -126,18 +127,14 @@ public class DrawView extends View
 		for (Map.Entry<ShapeKind, Map<String, ShapesObject>> entry : subObjects.entrySet()) {
 			subObjects.get(entry.getKey()).clear();
 		}
-		shapeWriters.clear();
+
 		shapeReaders.clear();
 		
-		if (shapesDDS.stop())
-		{ 
-			shapesDDS = null;
-			return true;
-		}
-		else {
-			return false;
-		}
+		shapesDDS.stop();
 		
+		shapesDDS = null;
+		
+		return true;
 	}
 
 	/* Called to draw all objects on the canvas */
@@ -148,24 +145,19 @@ public class DrawView extends View
 		/* Iterate through and render and send the current location of published shapes */
 		for (Map.Entry<ShapeKind, Map<String, ShapesObject>> entry : pubObjects
 		        .entrySet()) {
-
-			Integer writer = shapeWriters.get(entry.getKey());
-
-			if (writer != null) {
-				for (Map.Entry<String, ShapesObject> obj : entry.getValue()
-				        .entrySet()) {
-					// Can change size of objects on the go! 
-					obj.getValue().setSize(Integer.parseInt(settings.getString("shapeSize", "30")));
-					obj.getValue().draw(canvas, false);
-					// ignore if in "pause" mode
-					if ( !isPaused ) {
-						// Send current location using DDS
-						shapesDDS.write(writer, obj.getValue());
-					}
+			for (Map.Entry<String, ShapesObject> obj : entry.getValue()
+			        .entrySet()) {
+				// Can change size of objects on the go! 
+				obj.getValue().setSize(Integer.parseInt(settings.getString("shapeSize", "30")));
+				obj.getValue().draw(canvas, false);
+				// ignore if in "pause" mode
+				if ( !isPaused ) {
+					// Send current location using DDS
+					obj.getValue().write();
 				}
 			}
 		}
-
+		
 		/* Iterate and render the current location of subscribed shapes */
 		for (Map.Entry<ShapeKind, Map<String, ShapesObject>> entry : subObjects
 		        .entrySet()) {
@@ -226,7 +218,7 @@ public class DrawView extends View
 			if (dragObject != null) {
 				
 				// Move object to dragged position
-				dragObject.setPosition(eventX, eventY);
+				dragObject.setPosition((int)eventX, (int)eventY);
 
 				// if we've been dragging for more than 500 ms, reset our drag
 				// info, so the final
@@ -261,7 +253,7 @@ public class DrawView extends View
 				// Use normalized drag vector as the new direction
 				dragObject.setDirection(dragVector.normalize());
 				dragObject.setSpeed(speed);
-				dragObject.setPosition(eventX, eventY);
+				dragObject.setPosition((int)eventX, (int)eventY);
 
 				dragObject = null;
 			}
@@ -294,7 +286,7 @@ public class DrawView extends View
 					continue;
 				}
 
-				// if using Accelometer, change speed and direction by acceleration
+				// if using Accelerometer, change speed and direction by acceleration
 				// ignore if in not in "Accel" mode
 				if ( isAccel ) 
 				{
@@ -343,7 +335,7 @@ public class DrawView extends View
 					obj.getDirection().setY(obj.getDirection().getY() * -1);
 				}
 
-				obj.setPosition(newX, newY);
+				obj.setPosition((int)newX, (int)newY);
 			}
 		}
 	}
@@ -353,27 +345,20 @@ public class DrawView extends View
 	 */
 	public void addPublication(ShapeKind kind, String color)
 	{
-		// Create writer if not created already
-		Integer writer = shapeWriters.get(kind);
-		if (writer == null) {
-			writer = shapesDDS.create_writer(kind);
-			shapeWriters.put(kind, writer);
-		}
-
 		// Create object of shape/color if not created already
 		if (pubObjects.get(kind).get(color) == null) {
+			// Create writer 
+			ShapeTypeDataWriter writer = shapesDDS.create_writer(kind);
 
-			ShapesObject obj = new ShapesObject(kind, color, 30);
+			ShapesObject obj = new ShapesObject(kind, color, 30, writer);
 			pubObjects.get(kind).put(color, obj);
 		}
-
 	}
 
 	/* Internal class that implements a listener object that is called
 	 * back for subscribed shapes.
 	 */
-	private class ShapesListener implements
-	        ShapesDDS.ShapesDDSDataReaderListener
+	private class ShapesListener extends DataReaderAdapter
 	{
 		private ShapeKind kind;
 
@@ -382,24 +367,51 @@ public class DrawView extends View
 			this.kind = kind;
 		}
 
+	    private ShapeTypeSeq _dataSeq = new ShapeTypeSeq();
+	    private SampleInfoSeq _infoSeq = new SampleInfoSeq();
+	    
 		@Override
-		public void on_data_available(String color, int x, int y, int size)
-		{			
-			ShapesObject obj;
+		public void on_data_available(DataReader reader)
+		{		
+			ShapeTypeDataReader shapeTypeReader = (ShapeTypeDataReader)reader;
 
-			// Get a handle to the object of shape/color
-			obj = subObjects.get(kind).get(color);
+	        try {
+	            shapeTypeReader.take(
+	                        _dataSeq, 
+	                        _infoSeq,
+	                        ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+	                        SampleStateKind.ANY_SAMPLE_STATE,
+	                        ViewStateKind.ANY_VIEW_STATE,
+	                        InstanceStateKind.ANY_INSTANCE_STATE);
 
-			if (obj == null) {
-				// Never seen this shape/color combo before, create
-				// new entry for subscribed shapes collection
-				obj = new ShapesObject(kind, color, x, y, size, 0,
-				        new Vector2d(1, 0));
-				subObjects.get(kind).put(obj.getColor(), obj);
-			}
+	            for (int i = 0; i < _dataSeq.size(); ++i) {
+	                SampleInfo info = (SampleInfo)_infoSeq.get(i);
 
-			obj.setPosition(x, y);
-			obj.setSize(size);
+	                if (info.valid_data) {
+	                	ShapeType data = (ShapeType) _dataSeq.get(i);
+	       			    ShapesObject obj;
+
+		    			// Get a handle to the object of shape/color
+		    		
+						obj = subObjects.get(kind).get(data.color);
+	
+		    			if (obj == null) {
+		    				// Never seen this shape/color combo before, create
+		    				// new entry for subscribed shapes collection
+		    				obj = new ShapesObject(kind, data.color, data.x, data.y, 
+		    						data.shapesize, 0, new Vector2d(1, 0));
+		    				subObjects.get(kind).put(obj.getColor(), obj);
+		    			}
+	
+		    			obj.setPosition(data.x, data.y);
+		    			obj.setSize(data.shapesize);
+	                }
+	            }
+	        } catch (RETCODE_NO_DATA noData) {
+	            // No data to process
+	        } finally {
+	        	shapeTypeReader.return_loan(_dataSeq, _infoSeq);
+	        }
 		}
 	}
 
@@ -409,9 +421,9 @@ public class DrawView extends View
 	public void addSubscription(ShapeKind kind)
 	{
 		// Create reader if not created already
-		Integer reader = shapeReaders.get(kind);
+		DataReader reader = shapeReaders.get(kind);
+		
 		if (reader == null) {
-
 			ShapesListener listener = new ShapesListener(kind);
 			reader = shapesDDS.create_reader(kind, listener);
 			shapeReaders.put(kind, reader);
