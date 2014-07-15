@@ -25,15 +25,15 @@ These instructions are for a Windows development host.
   
 4. Generate the type support code for Java
 
-   (assuming that you have RTI Connext DDS properly installed and with the `NDDSHOME` environment variable set to the installation directory of `RTI/ndds.5.x.x`
+   (assuming that you have RTI Connext DDS properly installed and with the `NDDSHOME` environment variable set to the installation directory of `RTI/ndds.5.x.x`)
    
     1. Open a shell/command prompt to the ShapesDemo project directory
     2. cd to `src` 
         you should see the file `ShapesType.idl` in the current working directory
     3. run the following command
      
-       $(NDDSHOME)/scripts/rtiddsgen -replace -language Java -package com.rti.android.shapesdemo.idl ShapeType.idl
-       
+             $NDDSHOME/scripts/rtiddsgen -replace -language Java -package com.rti.android.shapesdemo.idl ShapeType.idl
+    
        you may need to also use `-ppdisable` if you're developing on a Windows host
 
 5. Open ShapesDemo project in Eclipse
