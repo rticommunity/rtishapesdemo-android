@@ -47,7 +47,9 @@ These instructions are for a Windows development host.
     1. Open Properties for the ShapesDemo project
     2. Select "Java Build Path", and in the "Libraries" tab, use "Add External JAR" to add "nddsjava.jar" from 
        $(NDDSHOME)/class/
-    3. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
+    3. In the "Java Build Path" -> "Order and Export" tab, check to select "nddsjava.jar".
+    4. In the same tab, select "nddsjava.jar" and use the buttons on the side and move it to the top.
+    5. Copy "libnddsjava.so", "libnddsc.so", and "libnddscore.so" from $(NDDSHOME)/lib/armv7aAndroid2.3gcc4.8jdk
        into the project directory libs/armeabi-v7a
 
 7. To generate the APK, with the ShapesDemo project selected in the Project Explorer, you will need to select "Run" from the "Run" menu.  
