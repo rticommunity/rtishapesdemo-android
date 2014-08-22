@@ -61,8 +61,11 @@ These instructions are for a Windows development host.
    Please consult the Android eclipse SDK documentation for further information.
    
 
+   NOTE:  On Windows, you may need to install or update your USB driver for your specific device.
+          Please see: http://developer.android.com/tools/extras/oem-usb.html
 
 ## Getting Started
+------------------
 
 1. Installing `ShapesDemo.apk` on a real Android Device
     1. Attach your Device via USB
@@ -143,11 +146,14 @@ WiFi network (on the same subnet).
 4. In ShapesDemo.exe (on your computer), you MUST change the Liveliness Kind of your 
 shape publishers (datawriters) to `MANUAL_BY_TOPIC` for the Android subscriber to receive the data.
 
+
 5. Notes:
 ShapesDemo on Android is configured by default to publish/subscribe using `BEST_EFFORT_RELIABILITY` 
 and `MANUAL_BY_TOPIC` Liveliness kind.
 
+
 6. See Troubleshooting section below if you can't get the two ShapesDemos to exchange data.
+    
     
 File Description
 -----------------
@@ -168,8 +174,6 @@ File Description
 * `src/com/rti/android/shapesdemo/util/EditTextPreferenceWithValue.java` - Useful class so that when a preference (setting/option) is changed by the user, the new value is automatically reflected in the preferences menu.
  
  
-
- 
 ### Android Application Files ###
 
 * `AndroidManifest.xml` - Main definition file for ShapesDemo app including which Activity to start on startup
@@ -184,6 +188,7 @@ File Description
 
 
 ## Troubleshooting
+-------------------
   
 1. ShapesDemo can't publish or subscribe to host?
 
